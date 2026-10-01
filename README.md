@@ -11,7 +11,6 @@ Things I have read till now and u can too if you are interested:
 personally I didnt really like the path filters part , i think there is tons of scope in it and ill prolly think of a way to implement smth
 
 Also read many articles on from like the first party(mqtt providers and bloomfilter articles etc HIGHLY recommend reading)
-personally I didnt really like the path filters part , i think there is tons of scope in it and ill prolly think of a way to implement smth
 
 ## Architecture
 
