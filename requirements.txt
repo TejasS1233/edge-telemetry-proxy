@@ -1,1 +1,2 @@
 pytest>=8
+paho-mqtt>=2.0

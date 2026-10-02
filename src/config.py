@@ -23,3 +23,15 @@ class EdgeConfig:
             pct = getattr(self, name)
             if not 0.0 <= pct <= 1.0:
                 raise ValueError(f"{name} must be in [0, 1]")
+
+
+@dataclass(frozen=True, slots=True)
+class MqttConfig:
+    broker_host: str = "localhost"
+    broker_port: int = 1883
+    topic: str = "telemetry/#"
+    topic_prefix: str = "telemetry"
+
+    def __post_init__(self) -> None:
+        if not 1 <= self.broker_port <= 65535:
+            raise ValueError("broker_port must be 1-65535")
