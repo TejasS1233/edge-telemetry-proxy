@@ -80,3 +80,31 @@ def test_handle_message_bad_payload_returns_none():
     ingress = MqttIngress(pipeline=EdgePipeline(window_size=5))
     assert ingress.handle_message("telemetry/dev-1", "garbage{") is None
     assert ingress.dropped == 1
+
+
+def test_parse_boot_id():
+    payload = json.dumps({"sequence": 1, "value": 20.0, "boot_id": "boot-A"})
+    t = parse_telemetry("telemetry/dev-1", payload)
+    assert t.boot_id == "boot-A"
+
+
+def test_parse_missing_boot_id_defaults_empty():
+    # old payloads without boot_id still work
+    t = parse_telemetry("telemetry/dev-1", '{"sequence": 1, "value": 20.0}')
+    assert t.boot_id == ""
+
+
+def test_encode_keeps_boot_id():
+    t = Telemetry(device_id="d1", sequence=5, timestamp=1.0, metric="temperature", value=20.0, boot_id="boot-A")
+    back = parse_telemetry("telemetry/d1", encode_telemetry(t))
+    assert back.boot_id == "boot-A"
+    assert back == t
+
+
+def test_handle_message_reboot_is_new():
+    ingress = MqttIngress(pipeline=EdgePipeline(window_size=5))
+    for seq in (100, 101, 102):
+        ingress.handle_message("telemetry/s1", json.dumps({"sequence": seq, "value": 20.0, "boot_id": "boot-A"}))
+    rebooted = ingress.handle_message("telemetry/s1", json.dumps({"sequence": 0, "value": 20.0, "boot_id": "boot-B"}))
+    assert rebooted.decision == Decision.FORWARD
+    assert rebooted.dedup.status == DedupStatus.NEW

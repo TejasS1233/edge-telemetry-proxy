@@ -10,3 +10,4 @@ class Telemetry:
     timestamp: float
     metric: str
     value: float
+    boot_id: str = ""

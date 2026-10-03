@@ -42,6 +42,7 @@ def parse_telemetry(topic: str, payload: bytes | str):
         timestamp=float(data.get("timestamp", time.time())),
         metric=str(data.get("metric", "temperature")),
         value=float(data["value"]),
+        boot_id=str(data.get("boot_id", "")),
     )
 
 
@@ -53,6 +54,7 @@ def encode_telemetry(telemetry) -> str:
             "timestamp": telemetry.timestamp,
             "metric": telemetry.metric,
             "value": telemetry.value,
+            "boot_id": telemetry.boot_id,
         }
     )
 

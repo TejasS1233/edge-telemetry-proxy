@@ -20,6 +20,7 @@ def _build_device_sequence(
     window_size: int,
     base_sequence: int,
     start_time: float,
+    boot_id: str = "",
 ) -> list[Telemetry]:
     seqs = list(range(base_sequence, base_sequence + events_per_device))
 
@@ -61,6 +62,7 @@ def _build_device_sequence(
                 timestamp=start_time + offset * 0.01,
                 metric="temperature",
                 value=20.0 + rng.gauss(0.0, 2.0),
+                boot_id=boot_id,
             )
         )
     return events
@@ -76,6 +78,7 @@ def generate_telemetry(
     seed: int | None = None,
     base_sequence: int = 1,
     interleave: bool = True,
+    boot_id: str = "",
 ) -> Iterator[Telemetry]:
     rng = random.Random(seed)
     start_time = time.time()
@@ -86,6 +89,7 @@ def generate_telemetry(
             _build_device_sequence(
                 rng, device_id, events_per_device, duplicate_pct,
                 out_of_order_pct, late_pct, window_size, base_sequence, start_time,
+                boot_id,
             )
         )
     if not interleave:

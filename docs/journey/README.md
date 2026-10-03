@@ -13,6 +13,7 @@ New entries get added when my understanding changes, not every commit.
 | 005 | Memory and data structures | Done |
 | 006 | MQTT ingress | Done |
 | 007 | Benchmarking | Done |
+| 008 | Device restarts and boot_id | Done |
 
 
 Decisions live in `../decisions/`. Measured numbers live in `../experiments/`.

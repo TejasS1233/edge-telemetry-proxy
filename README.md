@@ -50,9 +50,9 @@ Files:
 
 ## how dedup works
 
-Each device has its own counter. `(device_id, sequence)` is the key.
+Each device has its own counter per boot session. `(device_id, boot_id, sequence)` is the key, so a reboot with a fresh `boot_id` starts a clean window instead of reading reset counters as TOO_OLD. No `boot_id` just means the default session.
 
-Per device I keep:
+Per device session I keep:
 
 * `max_seq` - highest seq seen so far
 * `seen` - set of seqs inside `[max_seq - window + 1, max_seq]`
@@ -133,7 +133,7 @@ python simulator/mqtt_publisher.py --num-devices 5 --events-per-device 20
 More knobs:
 
 ```bash
-python simulator/mqtt_publisher.py --num-devices 10 --events-per-device 100 --duplicate-pct 0.1 --out-of-order-pct 0.05 --prefix telemetry --host localhost --port 1883 --seed 42
+python simulator/mqtt_publisher.py --num-devices 10 --events-per-device 100 --duplicate-pct 0.1 --out-of-order-pct 0.05 --prefix telemetry --host localhost --port 1883 --seed 42 --boot-id boot-A
 ```
 
 ## example MQTT message
@@ -143,10 +143,10 @@ Topic: `telemetry/device-00001`
 Payload (JSON):
 
 ```json
-{"device_id": "device-00001", "sequence": 42, "timestamp": 1727740000.0, "metric": "temperature", "value": 21.5}
+{"device_id": "device-00001", "sequence": 42, "timestamp": 1727740000.0, "metric": "temperature", "value": 21.5, "boot_id": "boot-A"}
 ```
 
-`device_id` in the payload is optional. If missing, the proxy takes it from the last part of the topic. `timestamp` and `metric` default too. `sequence` and `value` are required.
+`device_id` in the payload is optional. If missing, the proxy takes it from the last part of the topic. `timestamp`, `metric` and `boot_id` default too. `sequence` and `value` are required. Send a new `boot_id` after a device reboot so the reset counter starts a fresh session.
 
 ## Try it out (no MQTT path)
 

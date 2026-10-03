@@ -22,6 +22,7 @@ def main() -> None:
     parser.add_argument("--late-pct", type=float, default=0.02)
     parser.add_argument("--window-size", type=int, default=32)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--boot-id", default="")
     parser.add_argument("--prefix", default="telemetry")
     parser.add_argument("--host", default="localhost")
     parser.add_argument("--port", type=int, default=DEFAULT_PORT)
@@ -45,6 +46,7 @@ def main() -> None:
         late_pct=args.late_pct,
         window_size=args.window_size,
         seed=args.seed,
+        boot_id=args.boot_id,
     ):
         topic = f"{args.prefix}/{event.device_id}"
         client.publish(topic, encode_telemetry(event))
