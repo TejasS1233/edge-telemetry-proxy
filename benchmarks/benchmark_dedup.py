@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import sys
 import time
+import tracemalloc
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -20,36 +21,45 @@ def run_benchmark(
     late_pct: float = 0.02,
     window_size: int = 32,
     seed: int = 42,
-) -> dict[str, float]:
+) -> dict[str, int | float]:
     pipeline = EdgePipeline(window_size=window_size)
     counts = {"NEW": 0, "DUPLICATE": 0, "TOO_OLD": 0, "FORWARD": 0, "DROP": 0}
     total = 0
 
-    events = generate_telemetry(
-        num_devices=num_devices,
-        events_per_device=events_per_device,
-        duplicate_pct=duplicate_pct,
-        out_of_order_pct=out_of_order_pct,
-        late_pct=late_pct,
-        window_size=window_size,
-        seed=seed,
+    # build the full workload first, so gen time and its objects
+    # stay out of the timer and the memory trace below
+    events = list(
+        generate_telemetry(
+            num_devices=num_devices,
+            events_per_device=events_per_device,
+            duplicate_pct=duplicate_pct,
+            out_of_order_pct=out_of_order_pct,
+            late_pct=late_pct,
+            window_size=window_size,
+            seed=seed,
+        )
     )
 
+    tracemalloc.start()
     start = time.perf_counter()
-    for event in events:
-        result = pipeline.process(event)
-        total += 1
-        if result.dedup.status == DedupStatus.NEW:
-            counts["NEW"] += 1
-        elif result.dedup.status == DedupStatus.DUPLICATE:
-            counts["DUPLICATE"] += 1
-        else:
-            counts["TOO_OLD"] += 1
-        if result.decision == Decision.FORWARD:
-            counts["FORWARD"] += 1
-        else:
-            counts["DROP"] += 1
-    elapsed = time.perf_counter() - start
+    try:
+        for event in events:
+            result = pipeline.process(event)
+            total += 1
+            if result.dedup.status == DedupStatus.NEW:
+                counts["NEW"] += 1
+            elif result.dedup.status == DedupStatus.DUPLICATE:
+                counts["DUPLICATE"] += 1
+            else:
+                counts["TOO_OLD"] += 1
+            if result.decision == Decision.FORWARD:
+                counts["FORWARD"] += 1
+            else:
+                counts["DROP"] += 1
+    finally:
+        elapsed = time.perf_counter() - start
+        current, peak = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
 
     eps = total / elapsed if elapsed > 0 else 0.0
     reduction = (counts["DROP"] / total * 100.0) if total else 0.0
@@ -63,6 +73,8 @@ def run_benchmark(
         "reduction_pct": reduction,
         "seconds": elapsed,
         "events_per_second": eps,
+        "mem_current_mb": current / (1024 * 1024),
+        "mem_peak_mb": peak / (1024 * 1024),
     }
 
 
@@ -96,6 +108,9 @@ def main() -> None:
     print(f"reduction percentage  : {metrics['reduction_pct']:.2f}%")
     print(f"processing time       : {metrics['seconds']:.3f}s")
     print(f"events per second     : {metrics['events_per_second']:,.0f}")
+    print("=== Memory (Python traced allocs during processing, not total RSS) ===")
+    print(f"current traced memory : {metrics['mem_current_mb']:.2f} MB")
+    print(f"peak traced memory    : {metrics['mem_peak_mb']:.2f} MB")
 
 
 if __name__ == "__main__":

@@ -14,6 +14,8 @@ New entries get added when my understanding changes, not every commit.
 | 006 | MQTT ingress | Done |
 | 007 | Benchmarking | Done |
 | 008 | Device restarts and boot_id | Done |
+| 009 | Benchmark memory method | Done |
+| 010 | Scaling experiments | Done |
 
 
 Decisions live in `../decisions/`. Measured numbers live in `../experiments/`.
