@@ -10,9 +10,9 @@ A benchmark that could finally measure dedup state memory (009), and a hypothesi
 
 None in execution, the runs just took a while (the 100K run is 11M events, about 9 minutes of processing). The interesting part was all in the numbers.
 
-Device sweep at window 32: peak memory went 2.34 -> 23.33 -> 117.71 -> 235.41 MB across 1K to 100K devices. Dead linear, about 2.35 KB traced per device. Hypothesis confirmed for the device axis. Full table in `docs/experiments/device-scaling.md`.
+Device sweep at window 32: peak memory went 2.34 -> 23.33 -> 117.71 -> 235.41 MB across 1K to 100K devices. Dead linear, about 2.35 KB traced per device. Hypothesis confirmed for the device axis. Full table in `docs/experiments/002-device-scaling.md`.
 
-Window sweep at 10K devices (8, 32, 128, 1024): memory climbs then flatlines, with 128 and 1024 reporting identical numbers. Full table in `docs/experiments/window-scaling.md`.
+Window sweep at 10K devices (8, 32, 128, 1024): memory climbs then flatlines, with 128 and 1024 reporting identical numbers. Full table in `docs/experiments/003-window-scaling.md`.
 
 ## What I learned
 
@@ -22,7 +22,7 @@ On throughput I am deliberately careful. It falls with device count (46k -> 20k)
 
 ## What changed
 
-Results filed topic wise in `docs/experiments/device-scaling.md` and `docs/experiments/window-scaling.md`, with `dedup-results.md` now an index. Full raw outputs kept in the experiment notes.
+Results filed topic wise in `docs/experiments/002-device-scaling.md` and `docs/experiments/003-window-scaling.md`, with the experiments index at `docs/experiments/README.md`. Full raw outputs kept in the experiment notes.
 
 ## Next
 

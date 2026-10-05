@@ -1,11 +1,6 @@
-# Dedup benchmark results
+# 001 - Baseline runs
 
-Workload unless noted: 10% dupes, 5% out of order, 2% late, seed 42. In process path (no broker). Memory everywhere is Python traced allocs during pipeline processing, not total RSS.
-
-Topic wise results:
-
-- [Device scaling](device-scaling.md): 1K to 100K devices at window 32. Peak memory scales linearly (~2.35 KB per device).
-- [Window scaling](window-scaling.md): windows 8 to 1024 at 10K devices. Memory grows with window until the window exceeds events per device, then plateaus.
+Workload unless noted: 10% dupes, 5% out of order, 2% late, seed 42. In process path (no broker).
 
 ## Default run (10K devices x 100 events, window 32)
 
@@ -27,7 +22,3 @@ Topic wise results:
 ## The broken run that taught me smth
 
 First generator version did a flat global shuffle across devices. That scrambled per device order and gave 709k TOO_OLD out of 1.1M with a fake 67% reduction. Fixed with an ordered merge (each device emits in order, random pick of which device speaks next). Details in `../journey/007-benchmarking.md`.
-
-## Memory comparison and anomaly results
-
-Memory for the exact set baseline is now measured (see device and window scaling above). Bitmap/Bloom comparisons and anomaly results get written when those experiments actually run.

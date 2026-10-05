@@ -20,7 +20,7 @@ Im documenting the decisions, failed assumptions, experiments and performance tr
 
 - [Read the Engineering Journey](docs/journey/README.md)
 - [Decision records](docs/decisions/ADR-001-exact-dedup.md)
-- [Benchmark numbers](docs/experiments/dedup-results.md)
+- [Benchmark numbers](docs/experiments/README.md)
 
 ## Architecture
 

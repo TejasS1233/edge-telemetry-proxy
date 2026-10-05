@@ -22,7 +22,7 @@ Fixed the generator merge. Default workload (10k devices x 100 events, 10% dupes
 - forwarded 989,817, dropped 110,542, reduction 10.05%
 - around 46k events per sec on my machine
 
-Full table lives in `docs/experiments/dedup-results.md`.
+Full table lives in `docs/experiments/001-baseline.md`.
 
 ## Next
 

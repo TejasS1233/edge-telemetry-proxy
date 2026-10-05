@@ -16,6 +16,10 @@ New entries get added when my understanding changes, not every commit.
 | 008 | Device restarts and boot_id | Done |
 | 009 | Benchmark memory method | Done |
 | 010 | Scaling experiments | Done |
+| 011 | Pure bitmap dedup | Done |
+| 012 | Set vs bitmap | Done |
+| 013 | Ring bitmap | Done |
+| 014 | Three-way benchmark | Done |
 
 
 Decisions live in `../decisions/`. Measured numbers live in `../experiments/`.
